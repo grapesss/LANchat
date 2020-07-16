@@ -6,8 +6,9 @@ PORT = 5050
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!!!DISCONNECT"
 GET_NEW_MESSAGES = "!!!GET_NEW_MESSAGES"
-SERVER = '192.168.1.70'
+SERVER = '192.168.1.5'
 ADDR = (SERVER, PORT)
+
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect(ADDR)
@@ -16,16 +17,23 @@ client.connect(ADDR)
 message_list = []
 
 def send(msg):
-	message = msg.encode(FORMAT)
-	msg_length = len(message)
-	send_length = str(msg_length).encode(FORMAT)
-	send_length += b' ' * (HEADER - len(send_length))
-	client.send(send_length)
-	client.send(message)
-	print(client.recv(2048).decode(FORMAT))
-	
+    message = msg.encode(FORMAT)
+    msg_length = len(message)
+    send_length = str(msg_length).encode(FORMAT)
+    send_length += b' ' * (HEADER - len(send_length))
+    client.send(send_length)
+    client.send(message)
+    return client.recv(2048).decode(FORMAT)
+    
 def get_new_messages():
-	
+    send(GET_NEW_MESSAGES)
+    server_input = send(str(len(message_list)))
+    if type(server_input) == list:
+        for message in server_input:
+            message_list.append(message)
+    
+    else:
+        message_list.append(server_input)
 
 root = Tk()
 output_frame = Frame(root, bg='#ffffff')
