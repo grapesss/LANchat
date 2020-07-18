@@ -1,5 +1,6 @@
 import socket
 import threading
+import pickle
 
 HEADER = 64
 PORT = 5050
@@ -17,12 +18,14 @@ message_list = []
 
 def send_new_messages(conn, messages_read):
 	count = 0
+    send_list = []
     for message in len(message_list):
-        if count < messages_read and count <= len(message_list):
-        	pass # For now
-
+        if count > messages_read and count <= len(message_list):
+        	send_list.append(message_list[message])
         elif count <:
-        	count += 1
+        	pass
+        count += 1
+    conn.send(pickle.dumps(send_list))
     
 
 
@@ -36,15 +39,17 @@ def handle_client(conn, addr):
             
             msg_length = int(msg_length)
             msg = conn.recv(msg_length).decode(FORMAT)
-            message_list.append(f"[{addr}] {msg}")
             
             if msg == DISCONNECT_MESSAGE:
                 connected = False
             
-            if msg  == GET_NEW_MESSAGES:
+            elif msg  == GET_NEW_MESSAGES:
                 messages_read = int(conn.recv(HEADER).decode(FORMAT))
-                
-            conn.send("MSG received".encode(FORMAT))
+
+                send_new_messages(conn, messages_read)
+
+            else:
+                message_list.append(f"[{addr}] {msg}")
     
     conn.close()
 

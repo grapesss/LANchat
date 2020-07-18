@@ -1,4 +1,5 @@
 import socket
+import pickle
 from tkinter import *
 
 HEADER = 64
@@ -24,10 +25,17 @@ def send(msg):
     client.send(send_length)
     client.send(message)
     return client.recv(2048).decode(FORMAT)
+
+def basic_send(msg):
+    message = msg.encode(FORMAT)
+
+    client.send(message)
+    return client.recv(2048).decode(FORMAT)
+
     
 def get_new_messages():
     send(GET_NEW_MESSAGES)
-    server_input = send(str(len(message_list)))
+    server_input = pickle.loads(basic_send(str(len(message_list))))
     if type(server_input) == list:
         for message in server_input:
             message_list.append(message)
