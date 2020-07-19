@@ -17,15 +17,15 @@ server.bind(ADDR)
 message_list = []
 
 def send_new_messages(conn, messages_read):
-	count = 0
+    count = 0
     send_list = []
-    for message in len(message_list):
-        if count > messages_read and count <= len(message_list):
-        	send_list.append(message_list[message])
-        elif count <:
-        	pass
+    for message in message_list:
+        if count > messages_read:
+            send_list.append(message)
+        
+        else:
+            pass
         count += 1
-    conn.send(pickle.dumps(send_list))
     
 
 
